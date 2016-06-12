@@ -3,7 +3,6 @@
 from datetime import date as dt_date
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
-from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.db.models.query import RawQuerySet
@@ -68,38 +67,3 @@ class User(AbstractUser):
         return self.is_verified
 
 
-class Contact(_Model):
-
-    STATUS = (
-        ("r", "Read"),
-        ("a", "Answered"),
-        ("u", "Unread"),
-    )
-
-    name = models.CharField("Full Name", max_length=100, blank=False, null=False)
-    email = models.EmailField("E-mail Address", blank=False, null=False)
-    phone = models.CharField(max_length=30, blank=True, null=True)
-    message = models.TextField(blank=False, null=False)
-    created_at = models.DateTimeField(null=True, blank=True, editable=False)
-    ip_address = models.IPAddressField(null=True, blank=True)
-    status = models.CharField(max_length=1, choices=STATUS, default="u")
-
-    class Meta:
-        db_table = 'Contact'
-        ordering = ["-id"]
-        search_fields = ["name", "email", "message"]
-
-    def __unicode__(self):
-        return u"%s" % self.name
-
-    @property
-    def is_read(self):
-        return self.status == "r"
-
-    @property
-    def is_answered(self):
-        return self.status == "a"
-
-    @property
-    def is_unread(self):
-        return self.status == "u"
